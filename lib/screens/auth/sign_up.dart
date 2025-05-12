@@ -1,9 +1,11 @@
 // lib/features/auth/screens/sign_up_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:email_validator/email_validator.dart';
 
-import '../../core/providers/sign_up_provider,dart';
+import '../../core/providers/sign_up_provider.dart';
 import '../../widgets/text_field.dart';
+import 'login.dart';
 
 class SignUpScreen extends ConsumerWidget {
   const SignUpScreen({super.key});
@@ -34,24 +36,27 @@ class SignUpScreen extends ConsumerWidget {
               CustomTextField(
                 hintText: 'First Name',
                 onChanged: notifier.updateFirstName,
-                errorText: state.firstName.isEmpty && state.status == FormStatus.error
-                    ? 'Please enter your first name'
-                    : null,
+                errorText:
+                    state.firstName.isEmpty && state.status == FormStatus.error
+                        ? 'Please enter your first name'
+                        : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 hintText: 'Last Name',
                 onChanged: notifier.updateLastName,
-                errorText: state.lastName.isEmpty && state.status == FormStatus.error
-                    ? 'Please enter your last name'
-                    : null,
+                errorText:
+                    state.lastName.isEmpty && state.status == FormStatus.error
+                        ? 'Please enter your last name'
+                        : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 hintText: 'Email',
                 keyboardType: TextInputType.emailAddress,
                 onChanged: notifier.updateEmail,
-                errorText: !EmailValidator.validate(state.email) && state.status == FormStatus.error
+                errorText: !EmailValidator.validate(state.email) &&
+                        state.status == FormStatus.error
                     ? 'Please enter a valid email'
                     : null,
               ),
@@ -60,7 +65,8 @@ class SignUpScreen extends ConsumerWidget {
                 hintText: 'Password',
                 obscureText: true,
                 onChanged: notifier.updatePassword,
-                errorText: state.password.length < 6 && state.status == FormStatus.error
+                errorText: state.password.length < 6 &&
+                        state.status == FormStatus.error
                     ? 'Password must be at least 6 characters'
                     : null,
               ),
@@ -74,7 +80,8 @@ class SignUpScreen extends ConsumerWidget {
                   const Text('Accept Terms and Conditions'),
                 ],
               ),
-              if (state.status == FormStatus.error && state.errorMessage != null)
+              if (state.status == FormStatus.error &&
+                  state.errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
@@ -100,7 +107,8 @@ class SignUpScreen extends ConsumerWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
                     );
                   },
                   child: const Text('Already have an account? Login'),

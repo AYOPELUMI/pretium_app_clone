@@ -1,9 +1,16 @@
 // lib/features/auth/screens/verify_account_screen.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../widgets/text_field.dart';
+import 'pin_confirmation_screen.dart';
+
 class VerifyAccountScreen extends ConsumerStatefulWidget {
   const VerifyAccountScreen({super.key});
 
   @override
-  ConsumerState<VerifyAccountScreen> createState() => _VerifyAccountScreenState();
+  ConsumerState<VerifyAccountScreen> createState() =>
+      _VerifyAccountScreenState();
 }
 
 class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
@@ -69,7 +76,8 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (_codeController.text.isEmpty || _selectedCountry == null) {
+                  if (_codeController.text.isEmpty ||
+                      _selectedCountry == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Please fill all fields')),
                     );

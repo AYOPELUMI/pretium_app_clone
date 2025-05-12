@@ -1,11 +1,16 @@
-// lib/features/auth/providers/auth_providers.dart
-final signUpFormProvider = StateNotifierProvider<SignUpFormNotifier, SignUpFormState>((ref) {
-  return SignUpFormNotifier();
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:flutter/material.dart';
+import 'auth_provider.dart';
+
+final signUpFormProvider =
+    StateNotifierProvider<SignUpFormNotifier, SignUpFormState>((ref) {
+  return SignUpFormNotifier(ref);
 });
 
 class SignUpFormNotifier extends StateNotifier<SignUpFormState> {
-  SignUpFormNotifier() : super(SignUpFormState());
-
+  SignUpFormNotifier(this.ref) : super(SignUpFormState());
+  final Ref ref;
   void updateFirstName(String value) {
     state = state.copyWith(firstName: value);
   }
@@ -29,17 +34,18 @@ class SignUpFormNotifier extends StateNotifier<SignUpFormState> {
   Future<void> submit() async {
     if (!state.isValid) return;
     state = state.copyWith(status: FormStatus.submitting);
-    
+
     try {
       await ref.read(authServiceProvider).signUp(
-        firstName: state.firstName,
-        lastName: state.lastName,
-        email: state.email,
-        password: state.password,
-      );
+            firstName: state.firstName,
+            lastName: state.lastName,
+            email: state.email,
+            password: state.password,
+          );
       state = state.copyWith(status: FormStatus.success);
     } catch (e) {
-      state = state.copyWith(status: FormStatus.error, errorMessage: e.toString());
+      state =
+          state.copyWith(status: FormStatus.error, errorMessage: e.toString());
     }
   }
 }

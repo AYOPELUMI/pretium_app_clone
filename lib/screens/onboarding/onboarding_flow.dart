@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pretium_app/screens/auth/login.dart';
 
 import '../../core/providers/provider.dart';
-import '../onboarding_screen.dart';
+import '../accept_payment.dart';
 import '../pay_bills_screen.dart';
 import '../pay_direct_screen.dart';
 import 'page_indicator.dart';
@@ -38,15 +38,15 @@ class OnboardingFlow extends ConsumerWidget {
             controller: pageController,
             physics: const NeverScrollableScrollPhysics(),
             children: const [
-              AcceptPaymentsScreen(),
               DirectPayScreen(),
+              AcceptPaymentsScreen(),
               PayBillsScreen(),
               LoginScreen(),
             ],
           ),
           if (currentPage < 3)
             Positioned(
-              bottom: 20,
+              bottom: 110,
               left: 0,
               right: 0,
               child: OnboardingPageIndicator(

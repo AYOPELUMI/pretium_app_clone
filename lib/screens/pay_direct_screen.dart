@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pretium_app/core/res/constants.dart';
+import 'package:pretium_app/core/res/gap.dart';
+import 'package:pretium_app/core/res/images.dart';
+import 'package:pretium_app/core/res/theme.dart';
+import 'package:pretium_app/widgets/render_svg.dart';
+import 'package:sizer/sizer.dart';
 
 import '../animations/animation.dart';
 import '../core/providers/provider.dart';
@@ -16,24 +22,28 @@ class DirectPayScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                  onPressed: () =>
-                      ref.read(onboardingProvider.notifier).goToPage(3),
-                  child: const Text('Skip'),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.all(12),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: context.theme.primaryColor.withOpacity(0.2)),
+                child: RenderSvg(
+                  svgPath: PretiumImages.card_svg,
+                  useIcon: true,
+                  svgHeight: 60,
+                  svgWidth: 60,
                 ),
               ),
-              const Spacer(),
-              const Text(
+              32.verticalSpacing,
+              Text(
                 'Direct Pay',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                style: title(),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Pay with crypto across Africa effortlessly',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
-              ),
+              Text('Pay with crypto across Africa effortlessly',
+                  style: subText()),
               const Spacer(),
               OnboardingButton(
                 text: 'Next',

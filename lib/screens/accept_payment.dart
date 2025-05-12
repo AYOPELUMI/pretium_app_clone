@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pretium_app/core/res/gap.dart';
+import 'package:pretium_app/core/res/theme.dart';
 
 import '../animations/animation.dart';
 import '../core/providers/provider.dart';
+import '../core/res/constants.dart';
+import '../core/res/images.dart';
 import '../widgets/onboarding_button.dart';
+import '../widgets/render_svg.dart';
 
 class AcceptPaymentsScreen extends ConsumerWidget {
   const AcceptPaymentsScreen({super.key});
@@ -16,17 +21,34 @@ class AcceptPaymentsScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SkipWidget(
+                  onTap: () =>
+                      ref.read(onboardingProvider.notifier).goToPage(3)),
               const Spacer(),
-              const Text(
+              Container(
+                padding: EdgeInsets.all(24),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: context.theme.primaryColor.withOpacity(0.2)),
+                child: RenderSvg(
+                  svgPath: PretiumImages.wallet_svg,
+                  useIcon: true,
+                  svgHeight: 30,
+                  svgWidth: 30,
+                ),
+              ),
+              32.verticalSpacing,
+              Text(
                 'Accept Payments',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                style: title(),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Accept stablecoin payments hassle-free',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
+                style: subText(),
               ),
               const Spacer(),
               Align(

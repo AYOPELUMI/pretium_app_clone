@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pretium_app/core/res/gap.dart';
+import 'package:pretium_app/core/res/theme.dart';
 
 import '../animations/animation.dart';
 import '../core/providers/provider.dart';
+import '../core/res/constants.dart';
+import '../core/res/images.dart';
 import '../widgets/onboarding_button.dart';
+import '../widgets/render_svg.dart';
 
 class PayBillsScreen extends ConsumerWidget {
   const PayBillsScreen({super.key});
@@ -16,27 +21,38 @@ class PayBillsScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                  onPressed: () => ref.read(onboardingProvider.notifier).goToPage(3),
-                  child: const Text('Skip'),
+              SkipWidget(
+                  onTap: () =>
+                      ref.read(onboardingProvider.notifier).goToPage(3)),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.all(12),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: context.theme.primaryColor.withOpacity(0.2)),
+                child: RenderSvg(
+                  svgPath: PretiumImages.bills_svg,
+                  useIcon: true,
+                  svgHeight: 60,
+                  svgWidth: 60,
                 ),
               ),
-              const Spacer(),
-              const Text(
+              32.verticalSpacing,
+              Text(
                 'Pay Bills',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                style: title(),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Pay for utility services and earn rewards',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
+                style: subText(),
               ),
               const Spacer(),
               OnboardingButton(
                 text: 'Get Started',
-                onPressed: () => ref.read(onboardingProvider.notifier).nextPage(),
+                onPressed: () =>
+                    ref.read(onboardingProvider.notifier).nextPage(),
               ),
             ],
           ),

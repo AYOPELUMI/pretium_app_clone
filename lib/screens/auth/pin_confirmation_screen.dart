@@ -1,4 +1,10 @@
 // lib/features/auth/screens/pin_confirmation_screen.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/providers/auth_provider.dart';
+import '../dashboard/dashboard_screen.dart';
+
 class PinConfirmationScreen extends ConsumerStatefulWidget {
   const PinConfirmationScreen({super.key});
 
