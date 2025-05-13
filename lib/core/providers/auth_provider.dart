@@ -1,4 +1,5 @@
 // lib/services/auth_service.dart
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +19,9 @@ class AuthService {
     return await ref.read(sharedPreferencesProvider.future);
   }
 
+  final _authChanges = StreamController<Map<String, dynamic>?>.broadcast();
+
+  Stream<Map<String, dynamic>?> get authChanges => _authChanges.stream;
   Future<void> signUp({
     required String firstName,
     required String lastName,
@@ -58,9 +62,10 @@ class AuthService {
     }
 
     await prefs.setString(_userKey, _encodeUser(user));
+    _authChanges.add(user); // Notify listeners
     return {
       'success': true,
-      'user': user,
+      'user': user, // Return the user directly instead of fetching again
     };
   }
 
@@ -116,42 +121,61 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(ref);
 });
 
-final authStateProvider =
-    StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
-  return AuthStateNotifier(ref);
-});
+final authStateProvider = StreamProvider<AuthState>((ref) async* {
+  final authService = ref.read(authServiceProvider);
 
-class AuthStateNotifier extends StateNotifier<AuthState> {
-  AuthStateNotifier(this.ref) : super(AuthState.initial()) {
-    _checkCurrentUser();
+  yield AuthState.loading();
+
+  try {
+    final currentUser = await authService.getCurrentUser();
+    if (currentUser != null) {
+      yield AuthState.authenticated(currentUser);
+    } else {
+      yield AuthState.initial();
+    }
+  } catch (e) {
+    yield AuthState.error(e.toString());
   }
 
+  // Listen to auth changes
+  yield* authService.authChanges.asyncMap((user) async {
+    if (user != null) {
+      return AuthState.authenticated(user);
+    } else {
+      return AuthState.initial();
+    }
+  });
+});
+Future<void> _checkCurrentUser(
+    AuthService authService, StreamController<AuthState> controller) async {
+  controller.add(AuthState.loading());
+  try {
+    final currentUser = await authService.getCurrentUser();
+    if (currentUser != null) {
+      controller.add(AuthState.authenticated(currentUser));
+    } else {
+      controller.add(AuthState.initial());
+    }
+  } catch (e) {
+    controller.add(AuthState.error(e.toString()));
+  }
+}
+
+class AuthStateNotifier {
   final Ref ref;
 
-  Future<void> _checkCurrentUser() async {
-    state = AuthState.loading();
-    try {
-      final currentUser = await ref.read(authServiceProvider).getCurrentUser();
-      if (currentUser != null) {
-        state = AuthState.authenticated(currentUser);
-      } else {
-        state = AuthState.initial();
-      }
-    } catch (e) {
-      state = AuthState.error(e.toString());
-    }
-  }
+  AuthStateNotifier(this.ref);
 
   Future<void> login(String email, String password) async {
-    state = AuthState.loading();
     try {
       final response = await ref.read(authServiceProvider).login(
             email: email,
             password: password,
           );
-      state = AuthState.authenticated(response['user']);
+      // The stream will automatically update when SharedPreferences change
     } catch (e) {
-      state = AuthState.error(e.toString());
+      // Error will be caught by the stream when checking current user
+      rethrow;
     }
   }
 
@@ -161,7 +185,6 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     required String email,
     required String password,
   }) async {
-    state = AuthState.loading();
     try {
       await ref.read(authServiceProvider).signUp(
             firstName: firstName,
@@ -172,15 +195,19 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       // After signup, automatically log the user in
       await login(email, password);
     } catch (e) {
-      state = AuthState.error(e.toString());
+      rethrow;
     }
   }
 
   Future<void> logout() async {
     await ref.read(authServiceProvider).logout();
-    state = AuthState.initial();
+    // The stream will automatically update to initial state
   }
 }
+
+final authStateNotifierProvider = Provider<AuthStateNotifier>((ref) {
+  return AuthStateNotifier(ref);
+});
 
 class AuthState {
   final bool isAuthenticated;
@@ -217,3 +244,8 @@ class AuthState {
         error: error,
       );
 }
+
+final currentUserProvider = Provider<Map<String, dynamic>?>((ref) {
+  final authState = ref.watch(authStateProvider).value;
+  return authState?.isAuthenticated == true ? authState?.user : null;
+});

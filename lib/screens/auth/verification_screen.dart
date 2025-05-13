@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pretium_app/core/res/constants.dart';
 import 'package:pretium_app/core/res/gap.dart';
 import 'package:pretium_app/core/res/images.dart';
+import 'package:pretium_app/core/router/router.gr.dart';
 import 'package:pretium_app/screens/auth/login.dart';
 import 'package:pretium_app/widgets/render_svg.dart';
 
@@ -71,7 +72,7 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
         leading: IconButton(
           icon:
               Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.router.popForced(),
         ),
       ),
       body: SingleChildScrollView(
@@ -149,12 +150,7 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
                     );
                     return;
                   }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PinConfirmationScreen(),
-                    ),
-                  );
+                  context.router.push(PinConfirmationRoute());
                 },
                 child: const Text('Verify Account'),
               ),

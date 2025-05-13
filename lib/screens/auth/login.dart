@@ -1,12 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:pretium_app/core/res/constants.dart';
 import 'package:pretium_app/core/res/gap.dart';
 import 'package:pretium_app/core/res/theme.dart';
+import 'package:pretium_app/core/router/router.gr.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../core/providers/auth_provider.dart';
 import '../../core/providers/login_provider.dart';
 import '../../core/providers/sign_up_provider.dart';
 import '../../core/res/images.dart';
@@ -29,6 +32,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   bool _isSubmitted = false;
+
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final authState = ref.read(authStateProvider);
+      authState.whenOrNull(
+        data: (isLoggedIn) {
+          FlutterNativeSplash.remove();
+        },
+        error: (_, __) {
+          FlutterNativeSplash.remove();
+        },
+      );
+    });
+  }
 
   @override
   void dispose() {
@@ -57,12 +75,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return null;
   }
 
-  void _submit() {
+  void _submit() async {
     setState(() => _isSubmitted = true);
 
     if (_formKey.currentState!.validate()) {
       final notifier = ref.read(loginFormProvider.notifier);
-      notifier.submit();
+      try {
+        await notifier.submit();
+        ref.read(authStateProvider).when(
+              data: (authState) {
+                if (authState.isAuthenticated) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    context.router.replaceAll([HomeTabRoute()]);
+                  });
+                }
+              },
+              loading: () {},
+              error: (error, stack) {
+                // Handle auth state errors if needed
+              },
+            );
+
+        context.router.replaceAll([HomeTabRoute()]);
+      } catch (e) {}
     }
   }
 
@@ -70,15 +105,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(loginFormProvider);
     final notifier = ref.read(loginFormProvider.notifier);
-
-    ref.listen<LoginFormState>(loginFormProvider, (previous, next) {
-      if (next.status == FormStatus.success) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-        );
-      }
-    });
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -89,6 +115,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                100.verticalSpacing,
                 IntrinsicWidth(
                   child: Container(
                     padding: EdgeInsets.all(16),
@@ -186,12 +213,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   context: context,
                   description: "Don't have an account?  ",
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignUpScreen(),
-                      ),
-                    );
+                    context.router.push(SignUpRoute());
                   },
                   actonWord: 'Sign Up',
                 )

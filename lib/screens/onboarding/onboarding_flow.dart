@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pretium_app/screens/auth/login.dart';
 
+import '../../core/providers/auth_provider.dart';
 import '../../core/providers/provider.dart';
 import '../accept_payment.dart';
 import '../pay_bills_screen.dart';
@@ -10,11 +14,33 @@ import '../pay_direct_screen.dart';
 import 'page_indicator.dart';
 
 @RoutePage()
-class OnboardingFlow extends ConsumerWidget {
+class OnboardingFlow extends ConsumerStatefulWidget {
   const OnboardingFlow({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _HomeTabScreenState createState() => _HomeTabScreenState();
+}
+
+class _HomeTabScreenState extends ConsumerState<OnboardingFlow> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      log("i am here");
+      final authState = ref.read(authStateProvider);
+      authState.whenOrNull(
+        data: (isLoggedIn) {
+          FlutterNativeSplash.remove();
+        },
+        error: (_, __) {
+          FlutterNativeSplash.remove();
+        },
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final pageController = PageController();
     final currentPage = ref.watch(onboardingProvider);
 

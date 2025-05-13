@@ -1,12 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pretium_app/core/providers/auth_provider.dart';
 import 'package:pretium_app/core/res/gap.dart';
 import 'package:pretium_app/core/res/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../animations/animation.dart';
+import '../core/providers/onboarding_provider.dart';
 import '../core/providers/provider.dart';
 import '../core/res/constants.dart';
 import '../core/res/images.dart';
+import '../core/router/router.gr.dart';
 import '../widgets/onboarding_button.dart';
 import '../widgets/render_svg.dart';
 
@@ -22,8 +27,13 @@ class PayBillsScreen extends ConsumerWidget {
           child: Column(
             children: [
               SkipWidget(
-                  onTap: () =>
-                      ref.read(onboardingProvider.notifier).goToPage(3)),
+                onTap: () async {
+                  ref.read(onboardingProvider.notifier).goToPage(3);
+                  ref.read(onboardingCompletedProvider.notifier).state = true;
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('onboarding_completed', true);
+                },
+              ),
               const Spacer(),
               Container(
                 padding: EdgeInsets.all(12),
@@ -50,10 +60,18 @@ class PayBillsScreen extends ConsumerWidget {
               ),
               const Spacer(),
               OnboardingButton(
-                text: 'Get Started',
-                onPressed: () =>
-                    ref.read(onboardingProvider.notifier).nextPage(),
-              ),
+                  text: 'Get Started',
+                  onPressed: () async {
+                    ref.read(onboardingProvider.notifier).nextPage();
+                    ref.read(onboardingCompletedProvider.notifier).state = true;
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('onboarding_completed', true);
+                    if (ref.read(authStateProvider).requireValue == true) {
+                      context.router.replaceAll([const HomeTabRoute()]);
+                    } else {
+                      context.router.replaceAll([const LoginRoute()]);
+                    }
+                  }),
             ],
           ),
         ),

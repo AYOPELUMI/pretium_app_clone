@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pretium_app/core/res/gap.dart';
 import 'package:pretium_app/core/res/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../animations/animation.dart';
+import '../core/providers/onboarding_provider.dart';
 import '../core/providers/provider.dart';
 import '../core/res/constants.dart';
 import '../core/res/images.dart';
@@ -24,8 +26,13 @@ class AcceptPaymentsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SkipWidget(
-                  onTap: () =>
-                      ref.read(onboardingProvider.notifier).goToPage(3)),
+                onTap: () async {
+                  ref.read(onboardingProvider.notifier).goToPage(3);
+                  ref.read(onboardingCompletedProvider.notifier).state = true;
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('onboarding_completed', true);
+                },
+              ),
               const Spacer(),
               Container(
                 padding: EdgeInsets.all(24),

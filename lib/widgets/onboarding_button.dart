@@ -26,6 +26,7 @@ class OnboardingButton extends StatelessWidget {
       child: isLoading
           ? Center(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(text,
                       style: const TextStyle(
@@ -33,7 +34,10 @@ class OnboardingButton extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       )),
-                  CircularProgressIndicator.adaptive()
+                  SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator.adaptive())
                 ],
               ),
             )

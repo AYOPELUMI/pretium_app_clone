@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pretium_app/core/res/gap.dart';
 import 'package:pretium_app/core/res/theme.dart';
+import 'package:pretium_app/core/router/router.gr.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../core/providers/auth_provider.dart';
 import '../dashboard/dashboard_screen.dart';
-
 
 @RoutePage()
 class PinConfirmationScreen extends ConsumerStatefulWidget {
@@ -41,15 +41,10 @@ class _PinConfirmationScreenState extends ConsumerState<PinConfirmationScreen> {
         _verifyPin();
       } else {
         // Move to confirmation screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PinConfirmationScreen(
-              initialPin: _enteredPin,
-              isConfirming: true,
-            ),
-          ),
-        );
+        context.router.replace(PinConfirmationRoute(
+          initialPin: _enteredPin,
+          isConfirming: true,
+        ));
       }
     }
   }
@@ -68,10 +63,7 @@ class _PinConfirmationScreenState extends ConsumerState<PinConfirmationScreen> {
       final success =
           await ref.read(authServiceProvider).verifyPin(_enteredPin);
       if (success) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-        );
+        context.router.replaceAll([HomeTabRoute()]);
       } else {
         _showError('Failed to save PIN. Please try again.');
       }

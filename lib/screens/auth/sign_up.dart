@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:pretium_app/core/res/gap.dart';
+import 'package:pretium_app/core/router/router.gr.dart';
 import 'package:pretium_app/screens/auth/verification_screen.dart';
 import 'package:sizer/sizer.dart';
 
@@ -91,12 +92,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
     ref.listen<SignUpFormState>(signUpFormProvider, (previous, next) {
       if (next.status == FormStatus.success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const VerifyAccountScreen(),
-          ),
-        );
+        context.router.push(VerifyAccountRoute());
       }
     });
 
@@ -106,7 +102,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         leading: IconButton(
           icon:
               Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.router.popForced(),
         ),
       ),
       body: SingleChildScrollView(
@@ -234,12 +230,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   description: "Already have an account? ",
                   actonWord: "Login",
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                    );
+                    context.router.push(LoginRoute());
                   },
                   context: context),
               12.verticalSpacing,

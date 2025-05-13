@@ -1,4 +1,6 @@
 // lib/features/auth/providers/login_providers.dart
+import 'dart:developer';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,15 +38,16 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
             email: state.email,
             password: state.password,
           );
+      log("i got here");
+      log(response.toString());
 
       // Handle successful login
       state = state.copyWith(
         status: FormStatus.success,
         user: response['user'],
       );
-
-    
     } catch (e) {
+      log(e.toString());
       state = state.copyWith(
         status: FormStatus.error,
         errorMessage: e.toString(),

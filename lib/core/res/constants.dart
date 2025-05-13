@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pretium_app/core/res/theme.dart';
 import 'package:sizer/sizer.dart';
 
+void dismissKeyboard() {
+  FocusManager.instance.primaryFocus?.unfocus();
+}
+
 TextStyle subText() {
   return TextStyle(fontSize: 12.sp, color: Colors.grey);
 }

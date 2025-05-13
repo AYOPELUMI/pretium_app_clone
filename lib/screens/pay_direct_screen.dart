@@ -23,6 +23,7 @@ class DirectPayScreen extends ConsumerWidget {
           child: Column(
             children: [
               const Spacer(),
+              32.verticalSpacing,
               Container(
                 padding: EdgeInsets.all(12),
                 alignment: Alignment.center,

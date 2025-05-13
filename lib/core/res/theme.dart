@@ -47,6 +47,7 @@ class PretiumTheme {
         fontWeight: FontWeight.w500,
       ),
     ),
+    dividerTheme: DividerThemeData(color: Colors.transparent),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.transparent,
