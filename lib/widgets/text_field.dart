@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+import 'package:flutter/material.dart';
+
+class CustomTextField extends StatefulWidget {
   final String hintText;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
@@ -22,6 +24,9 @@ class CustomTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final bool autofocus;
   final String? initialValue;
+  final bool showPasswordToggle;
+  final String? Function(String?)? validator;
+  final AutovalidateMode? autovalidateMode;
 
   const CustomTextField({
     super.key,
@@ -46,47 +51,78 @@ class CustomTextField extends StatelessWidget {
     this.focusNode,
     this.autofocus = false,
     this.initialValue,
+    this.showPasswordToggle = false,
+    this.validator,
+    this.autovalidateMode,
   });
 
   @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool _obscureText = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final effectiveObscureText =
+        widget.showPasswordToggle ? _obscureText : widget.obscureText;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          onChanged: onChanged,
-          maxLines: maxLines,
-          minLines: minLines,
-          readOnly: readOnly,
-          onTap: onTap,
-          textInputAction: textInputAction,
-          onFieldSubmitted: onSubmitted,
-          focusNode: focusNode,
-          autofocus: autofocus,
-          initialValue: initialValue,
+          controller: widget.controller,
+          obscureText: effectiveObscureText,
+          keyboardType: widget.keyboardType,
+          onChanged: widget.onChanged,
+          maxLines: widget.maxLines,
+          minLines: widget.minLines,
+          readOnly: widget.readOnly,
+          onTap: widget.onTap,
+          textInputAction: widget.textInputAction,
+          onFieldSubmitted: widget.onSubmitted,
+          focusNode: widget.focusNode,
+          autofocus: widget.autofocus,
+          initialValue: widget.initialValue,
+          validator: widget.validator,
+          autovalidateMode: widget.autovalidateMode,
           decoration: InputDecoration(
-            hintText: hintText,
-            labelText: labelText,
+            hintText: widget.hintText,
+            labelText: widget.labelText,
             floatingLabelAlignment: FloatingLabelAlignment.start,
             floatingLabelBehavior: FloatingLabelBehavior.auto,
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-            suffixIcon: suffixIcon,
-            errorText: errorText,
-            contentPadding: contentPadding ??
-                const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-            filled: true,
-            fillColor:
-                fillColor ?? Theme.of(context).inputDecorationTheme.fillColor,
+            prefixIcon:
+                widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
+            suffixIcon: widget.showPasswordToggle
+                ? IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                : widget.suffixIcon,
+            suffixIconConstraints: widget.suffixIcon != null
+                ? BoxConstraints(maxWidth: 32, maxHeight: 16)
+                : null,
+            errorText: widget.errorText,
+            errorMaxLines: 2,
+            contentPadding: widget.contentPadding,
+            fillColor: widget.fillColor,
           ),
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
+          style: theme.textTheme.bodyMedium,
         ),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import 'core/providers/auth_provider.dart';
@@ -13,8 +14,15 @@ import 'screens/dashboard/dashboard_screen.dart';
 import 'screens/onboarding/onboarding_flow.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize SharedPreferences early
+  final sharedPreferences = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWith((ref) => sharedPreferences),
+      ],
       child: const MyApp(),
     ),
   );

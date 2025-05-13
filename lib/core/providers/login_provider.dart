@@ -43,8 +43,7 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
         user: response['user'],
       );
 
-      // Navigate to dashboard or next screen
-      // This would typically be handled by a listener in the widget
+    
     } catch (e) {
       state = state.copyWith(
         status: FormStatus.error,

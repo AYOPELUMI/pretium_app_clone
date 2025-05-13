@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pretium_app/screens/auth/login.dart';
@@ -8,6 +9,7 @@ import '../pay_bills_screen.dart';
 import '../pay_direct_screen.dart';
 import 'page_indicator.dart';
 
+@RoutePage()
 class OnboardingFlow extends ConsumerWidget {
   const OnboardingFlow({super.key});
 

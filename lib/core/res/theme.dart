@@ -49,7 +49,7 @@ class PretiumTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: Colors.grey.withOpacity(0.05),
+      fillColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 14,
@@ -157,9 +157,51 @@ class PretiumTheme {
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Colors.grey.withOpacity(0.1),
+      filled: true,
+      fillColor: Colors.transparent,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 14,
+      ),
+      border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: Colors.grey.withOpacity(0.5),
+            width: 1.5,
+          )),
+      enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: Colors.grey.withOpacity(0.3),
+            width: 1.5,
+          )),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(
+          color: Color(0xFF15645E),
+          width: 1.5,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(
+          color: Colors.red,
+          width: 1.5,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(
+          color: Colors.red,
+          width: 1.5,
+        ),
+      ),
       hintStyle: TextStyle(
-        color: Colors.grey.withOpacity(0.6),
+        color: Colors.grey.withOpacity(0.8),
+      ),
+      errorStyle: const TextStyle(
+        color: Colors.red,
+        fontSize: 14,
       ),
     ),
   );
