@@ -60,7 +60,11 @@ class _HomeTabScreenState extends ConsumerState<HomeTabScreen> {
       child: DefaultTabController(
         length: 3,
         child: AutoTabsRouter(
-            routes: [DashboardRoute(), RecentTransactionsRoute()],
+            routes: [
+              DashboardRoute(),
+              DashboardRoute(),
+              RecentTransactionsRoute()
+            ],
             lazyLoad: false,
             builder: (context, child) {
               final tabRouter = AutoTabsRouter.of(context);
@@ -80,15 +84,8 @@ class _HomeTabScreenState extends ConsumerState<HomeTabScreen> {
                       isScrollable: false,
                       indicatorColor: Colors.transparent,
                       onTap: (index) {
-                        if (index == 1) {
-                          // Middle tab - show bottom sheet
-                          _showServicesBottomSheet(context);
-                          // Stay on current tab
-                          tabRouter.setActiveIndex(tabRouter.activeIndex);
-                        } else {
-                          // Other tabs - normal navigation
-                          tabRouter.setActiveIndex(index);
-                        }
+                        tabRouter.setActiveIndex(index);
+
                         HapticFeedback.lightImpact();
                       },
                       tabs: [
@@ -103,20 +100,26 @@ class _HomeTabScreenState extends ConsumerState<HomeTabScreen> {
                               color: context.theme.primaryColor,
                             ),
                             label: ""),
-                        Container(
-                          padding: EdgeInsets.all(12),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: context.theme.primaryColor,
-                              shape: BoxShape.circle),
-                          child: Icon(
-                            Icons.qr_code,
-                            color: Colors.white,
-                            size: 28,
+                        GestureDetector(
+                          onTap: () {
+                            _showServicesBottomSheet(context);
+                            HapticFeedback.lightImpact();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: context.theme.primaryColor,
+                                shape: BoxShape.circle),
+                            child: Icon(
+                              Icons.qr_code,
+                              color: Colors.white,
+                              size: 28,
+                            ),
                           ),
                         ),
                         TabItem(
-                            isActive: tabRouter.activeIndex == 2,
+                            isActive: tabRouter.activeIndex == 1,
                             icon: Icon(
                               Icons.receipt,
                               color: Colors.grey,
